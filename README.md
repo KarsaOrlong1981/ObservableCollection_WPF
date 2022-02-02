@@ -1,0 +1,2 @@
+# ObservableCollection_WPF
+Working with ObservableCollection, SQLite and INotifyPropertyChanged/INotifyPropertyChanging
