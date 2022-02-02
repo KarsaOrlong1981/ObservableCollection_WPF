@@ -51,7 +51,23 @@ namespace ObservableCollection_WPF
             }
             else
             {
-                personList = new ObservableCollection<Person>(personList.OrderByDescending(x => x.Name.Substring(0, 1)));
+                personList = new ObservableCollection<Person>(personList.OrderByDescending(x => x.Name));
+            }
+            lstNames.ItemsSource = null;
+            lstNames.ItemsSource = personList;
+            lstNames.SelectionChanged += lstNames_SelectionChanged_1;
+        }
+        private void OrderByAddress(MenuItem menuitem)
+        {
+            lstNames.SelectionChanged -= lstNames_SelectionChanged_1;
+            if (menuitem.IsChecked == true)
+            {
+                personList = new ObservableCollection<Person>(personList.OrderBy(x => x.Address));
+
+            }
+            else
+            {
+                personList = new ObservableCollection<Person>(personList.OrderByDescending(x => x.Address));
             }
             lstNames.ItemsSource = null;
             lstNames.ItemsSource = personList;
@@ -103,6 +119,12 @@ namespace ObservableCollection_WPF
                     lstNames.SelectionChanged += lstNames_SelectionChanged_1;
 
                 }
+                else
+                {
+                    lstNames.SelectionChanged -= lstNames_SelectionChanged_1;
+                    test.SelectedItem = null;
+                    lstNames.SelectionChanged += lstNames_SelectionChanged_1;
+                }
             }
         }
 
@@ -115,7 +137,7 @@ namespace ObservableCollection_WPF
 
         private void AddressCM_Click(object sender, RoutedEventArgs e)
         {
-            OrderByName(ascendMenuItemAddress);
+            OrderByAddress(ascendMenuItemAddress);
         }
 
         private void ascendMenuItemAddress_Click(object sender, RoutedEventArgs e)
@@ -129,6 +151,8 @@ namespace ObservableCollection_WPF
             ascendMenuItemAddress.IsChecked = false;
             decendMenuItemAddress.IsChecked = true;
         }
+       
+     
         #endregion Events
 
 
@@ -206,8 +230,16 @@ namespace ObservableCollection_WPF
         #region Database
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            AddListToDB();
-            MessageBox.Show("Liste wurde in der Datenbank gespeichert.", "MyAPP", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (personList.Count > 0)
+            {
+                AddListToDB();
+                MessageBox.Show("Liste wurde in der Datenbank gespeichert.", "MyAPP", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Bitte Einträge hinzufügen.", "MyAPP", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+           
         }
         private async void AddListToDB()
         {
@@ -263,7 +295,10 @@ namespace ObservableCollection_WPF
         {
             SelectAllFromDb();
         }
+
         #endregion Debug WriteLine
+
+       
     }
 
 
