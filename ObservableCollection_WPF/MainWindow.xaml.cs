@@ -207,7 +207,7 @@ namespace ObservableCollection_WPF
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             AddListToDB();
-
+            MessageBox.Show("Liste wurde in der Datenbank gespeichert.", "MyAPP", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private async void AddListToDB()
         {
