@@ -1,0 +1,55 @@
+﻿<Window x:Class="ObservableCollection_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ObservableCollection_WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="389*"></RowDefinition>
+            <RowDefinition Height="46*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" Grid.RowSpan="2">
+            <TextBlock x:Name="lblName" Text="Name"></TextBlock>
+            <TextBox x:Name="txtName"></TextBox>
+            <TextBlock x:Name="lblAddress" Text="Address"></TextBlock>
+            <TextBox x:Name="txtAddress"></TextBox>
+            <Button Grid.Column="0" Width="100" Height="20" Margin="5,5,5,5" x:Name="btnNames" Click="btnNames_Click" Content="Add"></Button>
+        </StackPanel>
+        <ListView x:Name="lstNames" Margin="5,5,5,5" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding TestBinding}" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Path=selectedItem}" SelectionChanged="lstNames_SelectionChanged_1" Grid.RowSpan="2"  >
+            <ListView.View >
+                <GridView x:Name="grdNames" AllowsColumnReorder="True" ColumnHeaderToolTip="Right Click" >
+
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}">
+                        <GridViewColumnHeader>Name
+                            <GridViewColumnHeader.ContextMenu>
+                                <ContextMenu  MenuItem.Click="NameCM_Click"  
+                                     Name="NameCM">
+                                    <MenuItem x:Name="ascendMenuItem" Header="Aufsteigend" Click="ascendMenuItem_Click" IsCheckable="True" IsChecked="True" />
+                                    <MenuItem x:Name="decendMenuItem" Header="Absteigend" Click="decendMenuItem_Click" IsCheckable="True" />
+                                </ContextMenu>
+                            </GridViewColumnHeader.ContextMenu>
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Address}">
+                        <GridViewColumnHeader>Address
+                            <GridViewColumnHeader.ContextMenu>
+                                <ContextMenu  MenuItem.Click="AddressCM_Click"  
+                                     Name="AddressCM">
+                                    <MenuItem x:Name="ascendMenuItemAddress" Header="Aufsteigend" Click="ascendMenuItemAddress_Click"  IsCheckable="True" IsChecked="True" />
+                                    <MenuItem x:Name="decendMenuItemAddress" Header="Absteigend" Click="decendMenuItemAddress_Click"  IsCheckable="True" />
+                                </ContextMenu>
+                            </GridViewColumnHeader.ContextMenu>
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
