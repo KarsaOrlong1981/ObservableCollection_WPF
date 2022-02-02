@@ -212,7 +212,7 @@ namespace ObservableCollection_WPF
         private async void AddListToDB()
         {
             var db = App.Db;
-
+            await db.DeleteAllItems<Person>();
             foreach (var item in personList)
             {
                 await db.AddToDBAsync(new Person
