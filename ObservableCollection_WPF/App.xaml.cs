@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,5 +14,17 @@ namespace ObservableCollection_WPF
     /// </summary>
     public partial class App : Application
     {
+        private static Database db;
+        public static Database Db
+        {
+            get
+            {
+                if (db == null)
+                {
+                    db = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PersonList.db1"));
+                }
+                return db;
+            }
+        }
     }
 }

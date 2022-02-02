@@ -12,7 +12,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="389*"></RowDefinition>
+            <RowDefinition Height="300*"></RowDefinition>
+            <RowDefinition Height="46*"/>
             <RowDefinition Height="46*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" Grid.RowSpan="2">
@@ -20,8 +21,11 @@
             <TextBox x:Name="txtName"></TextBox>
             <TextBlock x:Name="lblAddress" Text="Address"></TextBlock>
             <TextBox x:Name="txtAddress"></TextBox>
-            <Button Grid.Column="0" Width="100" Height="20" Margin="5,5,5,5" x:Name="btnNames" Click="btnNames_Click" Content="Add"></Button>
+            <Button Grid.Column="0" Width="100" Height="20" Margin="5,5,5,5" x:Name="btnNames" Click="btnNames_Click" Content="Add new Person"></Button>
+          
         </StackPanel>
+        <Button Grid.Column="0" Grid.Row="1"  Height="20" HorizontalAlignment="Center"  x:Name="btnSave" Click="btnSave_Click"  Content="Save List to Database"></Button>
+        <Button Grid.Column="0" Grid.Row="2"  Height="20" HorizontalAlignment="Center"  x:Name="btnDebug" Click="btnDebug_Click" Content="Select * From DB"></Button>
         <ListView x:Name="lstNames" Margin="5,5,5,5" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding TestBinding}" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding Path=selectedItem}" SelectionChanged="lstNames_SelectionChanged_1" Grid.RowSpan="2"  >
             <ListView.View >
                 <GridView x:Name="grdNames" AllowsColumnReorder="True" ColumnHeaderToolTip="Right Click" >

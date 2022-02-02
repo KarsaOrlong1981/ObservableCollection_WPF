@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,13 +24,9 @@ namespace ObservableCollection_WPF
     public partial class MainWindow : Window, INotifyPropertyChanged, INotifyPropertyChanging
     {
         
-        public class Person
-        {
-            public string Name { get; set; }
-            public string Address { get; set; }
-        }
+       
         #region MainWindow
-        private ObservableCollection<Person> person;
+        private ObservableCollection<Person> personList;
         public event PropertyChangingEventHandler PropertyChanging;
         public event PropertyChangedEventHandler PropertyChanged;
         bool isLoading;
@@ -37,17 +34,10 @@ namespace ObservableCollection_WPF
         {
             InitializeComponent();
             isLoading = true;
-            person = new ObservableCollection<Person>()
-            {
-                 new Person(){Name="Prabhat",Address="India"},
-                  new Person(){Name="Smith",Address="US"},
-                   new Person(){Name="Alan",Address="Canada"},
-                    new Person(){Name="Müller",Address="Germany"},
-                     new Person(){Name="Fortunato",Address="Italy"}
 
-            };
-
-            TestBinding = person;
+            personList = new ObservableCollection<Person>();
+            LoadAllFromDb();
+            TestBinding = personList;
             DataContext = this;
         }
         #region Methods
@@ -56,22 +46,22 @@ namespace ObservableCollection_WPF
             lstNames.SelectionChanged -= lstNames_SelectionChanged_1;
             if (menuitem.IsChecked == true)
             {
-                person = new ObservableCollection<Person>(person.OrderBy(x => x.Name));
+                personList = new ObservableCollection<Person>(personList.OrderBy(x => x.Name));
 
             }
             else
             {
-                person = new ObservableCollection<Person>(person.OrderByDescending(x => x.Name.Substring(0, 1)));
+                personList = new ObservableCollection<Person>(personList.OrderByDescending(x => x.Name.Substring(0, 1)));
             }
             lstNames.ItemsSource = null;
-            lstNames.ItemsSource = person;
+            lstNames.ItemsSource = personList;
             lstNames.SelectionChanged += lstNames_SelectionChanged_1;
         }
         #endregion Methods
         #region Events
         private void btnNames_Click(object sender, RoutedEventArgs e)
         {
-            person.Add(new Person() { Name = txtName.Text, Address = txtAddress.Text });
+            personList.Add(new Person() { Name = txtName.Text, Address = txtAddress.Text });
             txtName.Text = string.Empty;
             txtAddress.Text = string.Empty;
         }
@@ -96,25 +86,24 @@ namespace ObservableCollection_WPF
             ascendMenuItem.IsChecked = false;
 
         }
-        private void lstNames_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        private async void lstNames_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
         {
             if (isLoading == false)
             {
                 var test = sender as ListView;
-                Person name = (Person)test.SelectedItem;
+                Person person = (Person)test.SelectedItem;
 
                 MessageBoxResult result = MessageBox.Show("Möchten Sie diese Person entfernen ?", "MyAPP", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     lstNames.SelectionChanged -= lstNames_SelectionChanged_1;
-                    TestBinding.Remove(name);
+                    TestBinding.Remove(person);
+                    await DeletPersonFromDB(person.Id);
                     test.SelectedItem = null;
                     lstNames.SelectionChanged += lstNames_SelectionChanged_1;
 
                 }
             }
-
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -213,8 +202,68 @@ namespace ObservableCollection_WPF
 
         #endregion
 
-       
         #endregion MainWindow
+        #region Database
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            AddListToDB();
+
+        }
+        private async void AddListToDB()
+        {
+            var db = App.Db;
+
+            foreach (var item in personList)
+            {
+                await db.AddToDBAsync(new Person
+                {
+                    Name = item.Name,
+                    Address = item.Address
+                });
+            }
+        }
+        private async Task DeletPersonFromDB(int id)
+        {
+            var db = App.Db;
+            for (int i = 0; i < db.GetAllItemsAsync().Result.Count; i++)
+            {
+                if (db.GetAllItemsAsync().Result[i].Id == id)
+                {
+                    await db.DeleteItemAsync(id);
+                }
+               
+            }
+            
+        }
+        private void LoadAllFromDb()
+        {
+            var db = App.Db;
+            for (int i = 0; i < db.GetAllItemsAsync().Result.Count; i++)
+            {
+                int id = db.GetAllItemsAsync().Result[i].Id;
+                Person person = db.GetItemAsync(id).Result;
+                personList.Add (person);
+            }
+        }
+        #endregion Database
+        #region Debug WriteLine
+        //Show all Names in DB
+        private static void SelectAllFromDb()
+        {
+            var db = App.Db;
+            for (int i = 0; i < db.GetAllItemsAsync().Result.Count; i++)
+            {
+                int id = db.GetAllItemsAsync().Result[i].Id;
+                Person art = db.GetItemAsync(id).Result;
+                Debug.WriteLine(art.Name + " " + art.Id);
+            }
+        }
+
+        private void btnDebug_Click(object sender, RoutedEventArgs e)
+        {
+            SelectAllFromDb();
+        }
+        #endregion Debug WriteLine
     }
 
 
